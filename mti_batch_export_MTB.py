@@ -95,31 +95,31 @@ def export_one_file(filename) -> None:
 
         if packet.containsCalibratedData():
             acc = packet.calibratedAcceleration()
-            s += "Acc X: %.2f" % acc[0] + ", Acc Y: %.2f" % acc[1] + ", Acc Z: %.2f" % acc[2]
+            s += f"Acc X: {acc[0]:.2f}, Acc Y: {acc[1]:.2f}, Acc Z: {acc[2]:.2f}"
 
             gyr = packet.calibratedGyroscopeData()
-            s += " |Gyr X: %.2f" % gyr[0] + ", Gyr Y: %.2f" % gyr[1] + ", Gyr Z: %.2f" % gyr[2]
+            s += f" |Gyr X: {gyr[0]:.2f}, Gyr Y: {gyr[1]:.2f}, Gyr Z: {gyr[2]:.2f}"
 
             mag = packet.calibratedMagneticField()
-            s += " |Mag X: %.2f" % mag[0] + ", Mag Y: %.2f" % mag[1] + ", Mag Z: %.2f" % mag[2]
+            s += f" |Mag X: {mag[0]:.2f}, Mag Y: {mag[1]:.2f}, Mag Z: {mag[2]:.2f}"
 
         if packet.containsOrientation():
             quaternion = packet.orientationQuaternion()
-            s += "q0: %.2f" % quaternion[0] + ", q1: %.2f" % quaternion[1] + ", q2: %.2f" % quaternion[2] + ", q3: %.2f " % quaternion[3]
+            s += f"q0: {quaternion[0]:.2f}, q1: {quaternion[1]:.2f}, q2: {quaternion[2]:.2f}, q3: {quaternion[3]:.2f}"
 
             euler = packet.orientationEuler()
-            s += " |Roll: %.2f" % euler.x() + ", Pitch: %.2f" % euler.y() + ", Yaw: %.2f " % euler.z()
+            s += f" |Roll: {euler.x():.2f}, Pitch: {euler.y():.2f}, Yaw: {euler.z():.2f}"
 
         if packet.containsLatitudeLongitude():
             latlon = packet.latitudeLongitude()
-            s += " |Lat: %7.2f" % latlon[0] + ", Lon: %7.2f " % latlon[1]
+            s += f" |Lat: {latlon[0]:7.2f}, Lon: {latlon[1]:7.2f}"
 
         if packet.containsAltitude():
-            s += " |Alt: %7.2f " % packet.altitude()
+            s += f" |Alt: {packet.altitude():7.2f}"
 
         if packet.containsVelocity():
             vel = packet.velocity(xda.XDI_CoordSysEnu)
-            s += " |E: %7.2f" % vel[0] + ", N: %7.2f" % vel[1] + ", U: %7.2f " % vel[2]
+            s += f" |E: {vel[0]:7.2f}, N: {vel[1]:7.2f}, U: {vel[2]:7.2f}"
 
         s += "\n"
 
