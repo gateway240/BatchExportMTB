@@ -29,7 +29,7 @@
 #  ARBITRATORS APPOINTED IN ACCORDANCE WITH SAID RULES.
 #
 # Modifications of the example file "example_mti_parse_logfile.py" from Movella B.V.
-# by Victor P. M. Brossard <victor@trinoma.fr>, Trinoma SARL, France
+# by Victor P. M. Brossard <support@trinoma.fr>, Trinoma SARL, France
 
 from glob import glob
 import os
