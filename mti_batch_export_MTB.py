@@ -141,6 +141,7 @@ def export_one_file(filename) -> None:
             [' General information', ''],
             ['MT Manager version', '2022.2.0'],
             ['XDA version', xdaVersion.toXsString()],
+            ['Update Rate', f"{device.updateRate()}Hz"],
             [' Device information', ''],
             ['DeviceId', device.deviceId().toXsString()],
             ['ProductCode', device.productCode()],
@@ -289,4 +290,4 @@ if __name__ == '__main__':
             export_one_file(file)
         except:
             print("error with file: ", file)
-        # break
+        break
