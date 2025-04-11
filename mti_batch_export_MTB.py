@@ -146,6 +146,7 @@ def export_one_file(filename) -> None:
         while index < packetCount:
             # Retrieve a packet
             packet = device.getDataPacketByIndex(index)
+            packetCounter = packet.packetCounter()
             # if index == 0:
             #     header_info.append(['Coordinate system', packet.coordinateSystemOrientation()])
             # Assume variables packetCounter and sampleTimeFine are defined elsewhere
@@ -174,7 +175,7 @@ def export_one_file(filename) -> None:
                 mat_vals = [float('nan')] * 9
 
             row_parts = [
-                f"{index:05d}",
+                f"{packetCounter:05d}",
                 f"{acc[0]:.6f}", f"{acc[1]:.6f}", f"{acc[2]:.6f}",
                 f"{gyr[0]:.6f}", f"{gyr[1]:.6f}", f"{gyr[2]:.6f}",
                 f"{mag[0]:.6f}", f"{mag[1]:.6f}", f"{mag[2]:.6f}",
