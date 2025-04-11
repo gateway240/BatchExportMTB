@@ -39,25 +39,6 @@ import xsensdeviceapi as xda
 source_dir = os.path.expanduser('~/ProjectAlex/patient-02')
 results_dir = os.path.expanduser('~/data/patient-02')
 
-# header = """\\
-# """
-
-
-# header = """\
-# // General information: 
-# //  MT Manager version: 2022.2.0 
-# //  XDA version: 2022.2.0 build 7381 rev 124627 built on 2023-07-19
-# // Device information: 
-# //  DeviceId: 00B42D56
-# //  ProductCode: MTW2-3A7G6
-# //  Firmware Version: 4.4.0
-# //  Hardware Version: 1.1.0
-# // Device settings: 
-# //  Filter Profile: human(46.1)
-# //  Option Flags: Orientation Smoother Disabled, Position/Velocity Smoother Disabled, Continuous Zero Rotation Update Disabled, AHS Disabled, ICC Disabled
-# // Coordinate system: ENU
-# """
-
 delimiter = "\t"  # Change this to "," for CSV, "|" for pipe-separated, etc.
 
 header_fields = [
@@ -107,8 +88,6 @@ def export_one_file(filename) -> None:
 
     # Skip first element which is base station
     for device_id in devices[1:]:
-
-
         print("Creating XsControl object...")
         control = xda.XsControl_construct()
         assert (control != 0)
@@ -139,9 +118,9 @@ def export_one_file(filename) -> None:
         # The callback option is not used here.
         header_info = [
             [' General information', ''],
+            ['Update Rate', f"{device.updateRate()}Hz"],
             ['MT Manager version', '2022.2.0'],
             ['XDA version', xdaVersion.toXsString()],
-            ['Update Rate', f"{device.updateRate()}Hz"],
             [' Device information', ''],
             ['DeviceId', device.deviceId().toXsString()],
             ['ProductCode', device.productCode()],
@@ -204,47 +183,7 @@ def export_one_file(filename) -> None:
             ] + [f"{val:.6f}" for val in mat_vals]
             row = delimiter.join(row_parts)
             # print(row)
-          
-            # Construct tab-separated line
-            # row = f"{index:05d}\t" + \
-            #     f"{acc[0]:.6f}\t{acc[1]:.6f}\t{acc[2]:.6f}\t" + \
-            #     f"{gyr[0]:.6f}\t{gyr[1]:.6f}\t{gyr[2]:.6f}\t" + \
-            #     "\t".join(f"{val:.6f}" for val in mat_vals)
-
-            # print(row)  # Or write to a file
-
-
-            # if packet.containsCalibratedData():
-            #     acc = packet.calibratedAcceleration()
-            #     s += f"Acc X: {acc[0]:.2f}, Acc Y: {acc[1]:.2f}, Acc Z: {acc[2]:.2f}"
-
-            #     gyr = packet.calibratedGyroscopeData()
-            #     s += f" |Gyr X: {gyr[0]:.2f}, Gyr Y: {gyr[1]:.2f}, Gyr Z: {gyr[2]:.2f}"
-
-            #     mag = packet.calibratedMagneticField()
-            #     s += f" |Mag X: {mag[0]:.2f}, Mag Y: {mag[1]:.2f}, Mag Z: {mag[2]:.2f}"
-
-            # if packet.containsOrientation():
-            #     quaternion = packet.orientationQuaternion()
-            #     s += f"q0: {quaternion[0]:.2f}, q1: {quaternion[1]:.2f}, q2: {quaternion[2]:.2f}, q3: {quaternion[3]:.2f}"
-
-            #     euler = packet.orientationEuler()
-            #     s += f" |Roll: {euler.x():.2f}, Pitch: {euler.y():.2f}, Yaw: {euler.z():.2f}"
-                
-            #     # matrix = packet.orientationMatrix()  # Assuming this returns a 3x3 rotation matrix
-            #     # print(matrix)
-
-            # if packet.containsLatitudeLongitude():
-            #     latlon = packet.latitudeLongitude()
-            #     s += f" |Lat: {latlon[0]:7.2f}, Lon: {latlon[1]:7.2f}"
-
-            # if packet.containsAltitude():
-            #     s += f" |Alt: {packet.altitude():7.2f}"
-
-            # if packet.containsVelocity():
-            #     vel = packet.velocity(xda.XDI_CoordSysEnu)
-            #     s += f" |E: {vel[0]:7.2f}, N: {vel[1]:7.2f}, U: {vel[2]:7.2f}"
-
+            
             s += row
             s += "\n"
 
@@ -290,4 +229,4 @@ if __name__ == '__main__':
             export_one_file(file)
         except:
             print("error with file: ", file)
-        break
+        # break
