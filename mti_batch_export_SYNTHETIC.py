@@ -4,10 +4,9 @@ import string
 from pathlib import Path
 
 # Output settings
-sensor_ids = ["SYNTH-ABCD", "SYNTH-EFGH", "SYNTH-IJKL", "SYNTH-MNOP"]
-
 results_dir = os.path.expanduser('~/data/test-data')
-delimiter = "\t"
+
+sensor_ids = ["SYNTH-ABCD", "SYNTH-EFGH", "SYNTH-IJKL", "SYNTH-MNOP"]
 
 # Define the fields
 header_fields = [
@@ -21,7 +20,7 @@ header_fields = [
     "Mat[1][2]", "Mat[2][2]", "Mat[3][2]",
     "Mat[1][3]", "Mat[2][3]", "Mat[3][3]"
 ]
-data_header = delimiter.join(header_fields)
+
 
 # Generate a random 3x3 rotation matrix
 def random_rotation_matrix():
@@ -35,7 +34,7 @@ def generate_device_id(existing_ids):
             return full_id
 
 # Generate synthetic data for one sensor
-def export_fake_sensor_data(trial_name, device_id, packet_count=100):
+def export_fake_sensor_data(trial_name, device_id, packet_count=100, delimiter='\t'):
     header_info = [
         [' General information', ''],
         ['Update Rate', "100Hz"],
@@ -92,15 +91,18 @@ def export_fake_sensor_data(trial_name, device_id, packet_count=100):
         for item in header_info:
             header += f"// {item[0]}: {item[1]}\n" if item[1] else f"// {item[0]}\n"
         f.write(header)
+        data_header = delimiter.join(header_fields)
         f.write(data_header + "\n")
         f.write(s)
 
     print(f"✅ Exported: {file_path}")
 
 # Main function to generate multiple sensors for the same trial
-def export_multiple_sensors(trial_name="testdata", packet_count=100):
+def export_multiple_sensors(trial_name="testdata", packet_count=100, delimiter='\t'):
     for device_id in sensor_ids:
-        export_fake_sensor_data(trial_name, device_id, packet_count)
+        export_fake_sensor_data(trial_name, device_id, packet_count, delimiter)
 
 if __name__ == '__main__':
-    export_multiple_sensors(trial_name="synthetic_trial01", packet_count=120)
+    export_multiple_sensors(trial_name="synthetic_trial01_tab", packet_count=120, delimiter='\t')
+    export_multiple_sensors(trial_name="synthetic_trial01_comma", packet_count=120, delimiter=',')
+    export_multiple_sensors(trial_name="synthetic_trial01_space", packet_count=120, delimiter=' ')
