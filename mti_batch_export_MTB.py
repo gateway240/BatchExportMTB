@@ -175,12 +175,12 @@ def export_one_file(filename) -> None:
 
             row_parts = [
                 f"{packetCounter:05d}",
-                f"{acc[0]:.6f}", f"{acc[1]:.6f}", f"{acc[2]:.6f}",
-                f"{gyr[0]:.6f}", f"{gyr[1]:.6f}", f"{gyr[2]:.6f}",
-                f"{mag[0]:.6f}", f"{mag[1]:.6f}", f"{mag[2]:.6f}",
-                f"{quat[0]:.6f}", f"{quat[1]:.6f}", f"{quat[2]:.6f}", f"{quat[3]:.6f}",
-                f"{roll:.6f}", f"{pitch:.6f}", f"{yaw:.6f}"
-            ] + [f"{val:.6f}" for val in mat_vals]
+                f"{acc[0]:.15f}", f"{acc[1]:.15f}", f"{acc[2]:.15f}",
+                f"{gyr[0]:.15f}", f"{gyr[1]:.15f}", f"{gyr[2]:.15f}",
+                f"{mag[0]:.15f}", f"{mag[1]:.15f}", f"{mag[2]:.15f}",
+                f"{quat[0]:.15f}", f"{quat[1]:.15f}", f"{quat[2]:.15f}", f"{quat[3]:.15f}",
+                f"{roll:.15f}", f"{pitch:.15f}", f"{yaw:.15f}"
+            ] + [f"{val:.15f}" for val in mat_vals]
             row = delimiter.join(row_parts)
             # print(row)
             
