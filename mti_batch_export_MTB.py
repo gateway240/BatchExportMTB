@@ -156,7 +156,6 @@ def export_one_file(filename) -> None:
                 mag = packet.calibratedMagneticField()
             else:
                 acc = gyr = mag = [float('nan')] * 3
-                # mag = [float('nan')] * 3
 
             if packet.containsOrientation():
                 quat = packet.orientationQuaternion()
