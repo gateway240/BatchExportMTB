@@ -6,7 +6,7 @@ from pathlib import Path
 # Output settings
 results_dir = os.path.expanduser('~/data/test-data')
 
-sensor_ids = ["SYNTH-ABCD", "SYNTH-EFGH", "SYNTH-IJKL", "SYNTH-MNOP"]
+sensor_ids = ["SYNTH-ABCD", "SYNTH-EFGH", "SYNTH-IJKL", "SYNTH-MNOP", "SYNTH-QRST"]
 
 # Define the fields
 header_fields = [

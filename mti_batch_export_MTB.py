@@ -36,8 +36,10 @@ import os
 from pathlib import Path
 import xsensdeviceapi as xda
 
-source_dir = os.path.expanduser('~/ProjectAlex/patient-02')
-results_dir = os.path.expanduser('~/data/patient-02')
+source_dir = os.path.expanduser('~/AlexDev/obscure-dataset-preprocessing/out/obscure-dataset')
+results_dir = os.path.expanduser('~/AlexDev/obscure-dataset-preprocessing/out/obscure-dataset')
+
+filter_dir = "raw_selected"
 
 delimiter = "\t"  # Change this to "," for CSV, "|" for pipe-separated, etc.
 
@@ -191,9 +193,22 @@ def export_one_file(filename) -> None:
 
         device_stem = Path(filename).stem
         exportFileName = f"{device_stem}-{device_id}.txt"
-        print(exportFileName)
-        export_file_path = os.path.join(results_dir,exportFileName)
+        
+        # Maintain the relative path structure, but replace 'raw' with 'extracted'
+        relative_path = Path(filename).relative_to(source_dir).parent
+        relative_parts = list(relative_path.parts)
+        try:
+            raw_index = relative_parts.index(filter_dir)
+            relative_parts[raw_index] = "extracted"
+        except ValueError:
+            print(f"[Warning] '{filter_dir}' not found in path: {relative_path}")
+        target_dir = Path(results_dir).joinpath(*relative_parts)
+        target_dir.mkdir(parents=True, exist_ok=True)
+
+        export_file_path = target_dir / exportFileName
+
         print(export_file_path)
+
         with open(export_file_path, "w") as outfile:
             header = ''
             for item in header_info:
@@ -204,7 +219,9 @@ def export_one_file(filename) -> None:
             outfile.write(header)
             outfile.write(data_header + "\n")
             outfile.write(s)
-        print("File is exported to: %s" % exportFileName)
+
+        print("File is exported to: %s" % export_file_path)
+
 
         print("Closing XsControl object...")
         control.close()
@@ -212,7 +229,8 @@ def export_one_file(filename) -> None:
 
 if __name__ == '__main__':
 
-    all_mtb_files = glob(os.path.join(source_dir, "**", "*.mtb"), recursive=True)
+    all_mtb_files = glob(os.path.join(source_dir, "**", filter_dir, "imu", "*.mtb"), recursive=True)
+
     # Create the directory
     try:
         os.mkdir(results_dir)
