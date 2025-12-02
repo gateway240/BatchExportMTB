@@ -36,10 +36,8 @@ import os
 from pathlib import Path
 import xsensdeviceapi as xda
 
-source_dir = os.path.expanduser('~/AlexDev/obscure-dataset-preprocessing/out/obscure-dataset')
-results_dir = os.path.expanduser('~/AlexDev/obscure-dataset-preprocessing/out/obscure-dataset')
-
-filter_dir = "raw_selected"
+source_dir = os.path.expanduser('~/data/kuopio-full-body-dataset/s01_raw/')
+results_dir = os.path.expanduser('~/data/kuopio-full-body-dataset/s02_extracted/')
 
 delimiter = "\t"  # Change this to "," for CSV, "|" for pipe-separated, etc.
 
@@ -190,19 +188,16 @@ def export_one_file(filename) -> None:
             s += "\n"
 
             index += 1
-
-        device_stem = Path(filename).stem
+        file_path = Path(filename)
+        device_stem = file_path.stem
         exportFileName = f"{device_stem}-{device_id}.txt"
         
-        # Maintain the relative path structure, but replace 'raw' with 'extracted'
-        relative_path = Path(filename).relative_to(source_dir).parent
-        relative_parts = list(relative_path.parts)
-        try:
-            raw_index = relative_parts.index(filter_dir)
-            relative_parts[raw_index] = "extracted"
-        except ValueError:
-            print(f"[Warning] '{filter_dir}' not found in path: {relative_path}")
-        target_dir = Path(results_dir).joinpath(*relative_parts)
+        # Maintain the relative path structure
+        
+        first_parent = file_path.parent
+        second_parent = first_parent.parent
+
+        target_dir = Path(results_dir) / second_parent.name / first_parent.name
         target_dir.mkdir(parents=True, exist_ok=True)
 
         export_file_path = target_dir / exportFileName
@@ -229,7 +224,7 @@ def export_one_file(filename) -> None:
 
 if __name__ == '__main__':
 
-    all_mtb_files = glob(os.path.join(source_dir, "**", filter_dir, "imu", "*.mtb"), recursive=True)
+    all_mtb_files = glob(os.path.join(source_dir, "**", "imu", "*.mtb"), recursive=True)
 
     # Create the directory
     try:
