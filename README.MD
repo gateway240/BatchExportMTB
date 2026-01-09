@@ -54,6 +54,9 @@ pip install xsensdeviceapi-<xda version>-cp<Python version>-none-<os type>.whl
 For example (MTSDK 2021.0.0 wheel for Python 3.9 on Linux):
 pip install xsensdeviceapi-2021.0.0-cp39-none-linux_x86_64.whl or
 
+For example (MTSDK 2025.5.0 wheel for Python 3.11 on Linux):
+pip install /usr/local/xsens/python/xsensdeviceapi-2025.5.0-cp311-none-linux_x86_64.whl
+
 For example (MTSDK 2021.0.0 wheel for Python 3.9 on Windows):
 pip install xsensdeviceapi-2021.0.0-cp39-none-win_amd64.whl
 
