@@ -30,32 +30,48 @@
 #
 # Modifications of the example file "example_mti_parse_logfile.py" from Movella B.V.
 # by Victor P. M. Brossard <support@trinoma.fr>, Trinoma SARL, France
-
-from glob import glob
+import argparse
 import os
-from pathlib import Path
+import traceback
 import xsensdeviceapi as xda
 
-source_dir = os.path.expanduser('~/data/kuopio-full-body-dataset/s01_raw/')
-results_dir = os.path.expanduser('~/data/kuopio-full-body-dataset/s02_extracted/')
+from glob import glob
+from pathlib import Path
 
 delimiter = "\t"  # Change this to "," for CSV, "|" for pipe-separated, etc.
 
 header_fields = [
     "PacketCounter",
-    "Acc_X", "Acc_Y", "Acc_Z",
-    "Gyr_X", "Gyr_Y", "Gyr_Z",
-    "Mag_X", "Mag_Y", "Mag_Z",
-    "Quat_q0", "Quat_q1", "Quat_q2", "Quat_q3",
-    "Roll", "Pitch", "Yaw",
-    "Mat[1][1]", "Mat[2][1]", "Mat[3][1]",
-    "Mat[1][2]", "Mat[2][2]", "Mat[3][2]",
-    "Mat[1][3]", "Mat[2][3]", "Mat[3][3]"
+    "Acc_X",
+    "Acc_Y",
+    "Acc_Z",
+    "Gyr_X",
+    "Gyr_Y",
+    "Gyr_Z",
+    "Mag_X",
+    "Mag_Y",
+    "Mag_Z",
+    "Quat_q0",
+    "Quat_q1",
+    "Quat_q2",
+    "Quat_q3",
+    "Roll",
+    "Pitch",
+    "Yaw",
+    "Mat[1][1]",
+    "Mat[2][1]",
+    "Mat[3][1]",
+    "Mat[1][2]",
+    "Mat[2][2]",
+    "Mat[3][2]",
+    "Mat[1][3]",
+    "Mat[2][3]",
+    "Mat[3][3]",
 ]
 data_header = delimiter.join(header_fields)
 
 
-def export_one_file(filename) -> None:
+def export_one_file(filename: str, output_dir: str, glob_pattern: str) -> None:
     """Export one MTB file to an ASCII file containing the data.
 
     Args:
@@ -67,7 +83,7 @@ def export_one_file(filename) -> None:
 
     print("Creating XsControl object...")
     control = xda.XsControl_construct()
-    assert (control != 0)
+    assert control != 0
 
     xdaVersion = xda.XsVersion()
     xda.xdaVersion(xdaVersion)
@@ -90,7 +106,7 @@ def export_one_file(filename) -> None:
     for device_id in devices[1:]:
         print("Creating XsControl object...")
         control = xda.XsControl_construct()
-        assert (control != 0)
+        assert control != 0
 
         print("Opening log file...", filename)
         if not control.openLogFile(filename):
@@ -100,9 +116,12 @@ def export_one_file(filename) -> None:
         print(device_id)
         device = control.device(device_id)
 
-        assert (device != 0)
+        assert device != 0
 
-        print("Device: %s, with ID: %s found in file" % (device.productCode(), device.deviceId().toXsString()))
+        print(
+            "Device: %s, with ID: %s found in file"
+            % (device.productCode(), device.deviceId().toXsString())
+        )
 
         # By default XDA does not retain data for reading it back.
         # By enabling this option XDA keeps the buffered data in a cache so it can be accessed
@@ -117,18 +136,18 @@ def export_one_file(filename) -> None:
         #
         # The callback option is not used here.
         header_info = [
-            [' General information', ''],
-            ['Update Rate', f"{device.updateRate()}Hz"],
-            ['MT Manager version', '2022.2.0'],
-            ['XDA version', xdaVersion.toXsString()],
-            [' Device information', ''],
-            ['DeviceId', device.deviceId().toXsString()],
-            ['ProductCode', device.productCode()],
-            ['Firmware Version', device.firmwareVersion().toXsString()],
-            ['Hardware Version', device.hardwareVersion().toXsString()],
-            [' Device settings', ''],
-            ['Filter Profile', device.xdaFilterProfile().toXsString()],
-            ['Option Flags', device.getOptions()],
+            [" General information", ""],
+            ["Update Rate", f"{device.updateRate()}Hz"],
+            ["MT Manager version", "2022.2.0"],
+            ["XDA version", xdaVersion.toXsString()],
+            [" Device information", ""],
+            ["DeviceId", device.deviceId().toXsString()],
+            ["ProductCode", device.productCode()],
+            ["Firmware Version", device.firmwareVersion().toXsString()],
+            ["Hardware Version", device.hardwareVersion().toXsString()],
+            [" Device settings", ""],
+            ["Filter Profile", device.xdaFilterProfile().toXsString()],
+            ["Option Flags", device.getOptions()],
             # ['Coordinate system', device.outputConfiguration()[0]]
         ]
         print("Loading the device file...")
@@ -141,7 +160,7 @@ def export_one_file(filename) -> None:
 
         # Export the data
         print("Exporting the data...", packetCount)
-        s = ''
+        s = ""
         index = 0
         while index < packetCount:
             # Retrieve a packet
@@ -155,35 +174,54 @@ def export_one_file(filename) -> None:
                 gyr = packet.calibratedGyroscopeData()
                 mag = packet.calibratedMagneticField()
             else:
-                acc = gyr = mag = [float('nan')] * 3
+                acc = gyr = mag = [float("nan")] * 3
 
             if packet.containsOrientation():
                 quat = packet.orientationQuaternion()
                 euler = packet.orientationEuler()
                 matrix = packet.orientationMatrix()  # 3x3 rotation matrix
                 # Flatten in column-major order
-                mat_vals = [matrix[0][0], matrix[1][0], matrix[2][0],
-                            matrix[0][1], matrix[1][1], matrix[2][1],
-                            matrix[0][2], matrix[1][2], matrix[2][2]]
+                mat_vals = [
+                    matrix[0][0],
+                    matrix[1][0],
+                    matrix[2][0],
+                    matrix[0][1],
+                    matrix[1][1],
+                    matrix[2][1],
+                    matrix[0][2],
+                    matrix[1][2],
+                    matrix[2][2],
+                ]
                 roll = euler.x()
                 pitch = euler.y()
                 yaw = euler.z()
             else:
-                quat = [float('nan')] * 4
-                roll = pitch = yaw = float('nan')
-                mat_vals = [float('nan')] * 9
+                quat = [float("nan")] * 4
+                roll = pitch = yaw = float("nan")
+                mat_vals = [float("nan")] * 9
 
             row_parts = [
                 f"{packetCounter:05d}",
-                f"{acc[0]:.15f}", f"{acc[1]:.15f}", f"{acc[2]:.15f}",
-                f"{gyr[0]:.15f}", f"{gyr[1]:.15f}", f"{gyr[2]:.15f}",
-                f"{mag[0]:.15f}", f"{mag[1]:.15f}", f"{mag[2]:.15f}",
-                f"{quat[0]:.15f}", f"{quat[1]:.15f}", f"{quat[2]:.15f}", f"{quat[3]:.15f}",
-                f"{roll:.15f}", f"{pitch:.15f}", f"{yaw:.15f}"
+                f"{acc[0]:.15f}",
+                f"{acc[1]:.15f}",
+                f"{acc[2]:.15f}",
+                f"{gyr[0]:.15f}",
+                f"{gyr[1]:.15f}",
+                f"{gyr[2]:.15f}",
+                f"{mag[0]:.15f}",
+                f"{mag[1]:.15f}",
+                f"{mag[2]:.15f}",
+                f"{quat[0]:.15f}",
+                f"{quat[1]:.15f}",
+                f"{quat[2]:.15f}",
+                f"{quat[3]:.15f}",
+                f"{roll:.15f}",
+                f"{pitch:.15f}",
+                f"{yaw:.15f}",
             ] + [f"{val:.15f}" for val in mat_vals]
             row = delimiter.join(row_parts)
             # print(row)
-            
+
             s += row
             s += "\n"
 
@@ -191,13 +229,17 @@ def export_one_file(filename) -> None:
         file_path = Path(filename)
         device_stem = file_path.stem
         exportFileName = f"{device_stem}-{device_id}.txt"
-        
-        # Maintain the relative path structure
-        
-        first_parent = file_path.parent
-        second_parent = first_parent.parent
 
-        target_dir = Path(results_dir) / second_parent.name / first_parent.name
+        # Maintain the relative path structure
+
+        # Compute relative path from source_dir
+        relative_path = file_path.relative_to(source_dir)
+
+        # Remove the filename (keep directory structure)
+        relative_dir = relative_path.parent
+
+        # Construct target directory
+        target_dir = output_dir / relative_dir
         target_dir.mkdir(parents=True, exist_ok=True)
 
         export_file_path = target_dir / exportFileName
@@ -205,7 +247,7 @@ def export_one_file(filename) -> None:
         print(export_file_path)
 
         with open(export_file_path, "w") as outfile:
-            header = ''
+            header = ""
             for item in header_info:
                 if item[1]:  # If there's a value in the second part of the list
                     header += f"// {item[0]}: {item[1]}\n"
@@ -217,14 +259,31 @@ def export_one_file(filename) -> None:
 
         print("File is exported to: %s" % export_file_path)
 
-
         print("Closing XsControl object...")
         control.close()
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser(description="Process MTB files and export results")
+    parser.add_argument(
+        "--source-dir", required=True, help="Root directory containing MTB files"
+    )
+    parser.add_argument(
+        "--results-dir", required=True, help="Directory where results will be written"
+    )
+    parser.add_argument(
+        "--glob_pattern",
+        default="**/imu/*.mtb",
+        help='Glob pattern relative to source-dir (default: "**/imu/*.mtb")',
+    )
 
-    all_mtb_files = glob(os.path.join(source_dir, "**", "imu", "*.mtb"), recursive=True)
+    args = parser.parse_args()
+
+    source_dir = os.path.expanduser(args.source_dir)
+    results_dir = os.path.expanduser(args.results_dir)
+    glob_pattern = args.glob_pattern
+
+    all_mtb_files = glob(os.path.join(source_dir, glob_pattern), recursive=True)
 
     # Create the directory
     try:
@@ -236,10 +295,14 @@ if __name__ == '__main__':
         print(f"Permission denied: Unable to create '{results_dir}'.")
     except Exception as e:
         print(f"An error occurred: {e}")
-   
+
     for file in all_mtb_files:
         try:
-            export_one_file(file)
-        except:
-            print("error with file: ", file)
-        # break
+            export_one_file(file, results_dir, glob_pattern)
+        except Exception as e:
+            print(
+                f"Error with file: {file} ; "
+                f"Exception type: {type(e).__name__} ; "
+                f"Message: {e}"
+            )
+            traceback.print_exc()

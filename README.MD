@@ -5,9 +5,21 @@ Script designed to export all `.mtb` files from a directory to `.txt` files.
 ## General information
 The script is heavily based on the example script from Movella B.V. `example_mti_parse_logfile.py` that is provided when installing the [MT Software Suite](https://www.movella.com/support/software-documentation).
 
+## Example usage
+
+```bash
+# usage: mti_batch_export_MTB.py [-h] --source-dir SOURCE_DIR --results-dir RESULTS_DIR [--pattern PATTERN]
+
+# Kuopio Full Body Dataset format
+python3 mti_batch_export_MTB.py --source-dir "~/data/kuopio-full-body-dataset/s01_raw/" --results-dir "~/data/mtb-test/results"
+
+# Generic sample dir with .mtb files
+python3 mti_batch_export_MTB.py --source-dir "~/data/mtb-test" --results-dir "~/data/mtb-test/results" --glob_pattern "**/*.mtb"
+
+```
+
 ## Usage notes
-In order to use it, you should change the `data_dir` (line 138), otherwise it will search for all `.mtb` files inside the current directory (and subdirectories, recursively).
-You can also change the data that will be exported, from lines 96 to 122.
+The source directory, results directory, and file search glob pattern are parameterizable with command line args.
 
 If you have several MTw devices recorded in your `.mtb` file, change the index of the device to be loaded (line 62).
 
@@ -33,7 +45,7 @@ pip install wheel
 
 2. Install xsensdeviceapi wheel:
 
-Located in 
+Located in
 Windows: <INSTALL_FOLDER>\MTSDK\Python\x64 or Win32
 Linux: <INSTALL_FOLDER>/xsens/python
 
